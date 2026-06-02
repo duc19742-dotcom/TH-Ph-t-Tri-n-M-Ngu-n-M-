@@ -10,6 +10,10 @@
     <link 
         href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" 
         rel="stylesheet"> 
+
+        <link href="/assets/css/style.css" rel="stylesheet">
+
+        
 </head> 
 
 <body> 
@@ -47,6 +51,26 @@
                         (<?php echo array_sum(array_column($_SESSION['cart'] ?? [], 'quantity')); ?>)
                     </a>
                 </li>
+                 <?php if (SessionHelper::isLoggedIn()): ?> 
+        <li class="nav-item">
+            <span class="nav-link">
+                <?php echo htmlspecialchars(SessionHelper::getUsername(), ENT_QUOTES, 'UTF-8'); ?>
+                (<?php echo htmlspecialchars(SessionHelper::getRole(), ENT_QUOTES, 'UTF-8'); ?>)
+            </span>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link" href="/Account/logout">Dang xuat</a>
+        </li>
+    <?php else: ?>
+        <li class="nav-item">
+            <a class="nav-link" href="/Account/login">Dang nhap</a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link" href="/Account/register">Dang ky</a>
+        </li>
+    <?php endif; ?>
 
             </ul> 
 

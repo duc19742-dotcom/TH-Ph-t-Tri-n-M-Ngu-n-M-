@@ -2,9 +2,11 @@
  
 <h1>Danh sách sản phẩm</h1> 
 
+<?php if (SessionHelper::isAdmin()): ?>
 <a href="/Product/add" class="btn btn-success mb-2">
     Thêm sản phẩm mới
 </a> 
+<?php endif; ?>
 
 <ul class="list-group"> 
 
@@ -45,6 +47,7 @@
                 <?php echo htmlspecialchars($product->category_name, ENT_QUOTES, 'UTF-8'); ?>
             </p> 
 
+            <?php if (SessionHelper::isAdmin()): ?>
             <a 
                 href="/Product/edit/<?php echo $product->id; ?>" 
                 class="btn btn-warning"
@@ -59,6 +62,8 @@
             >
                 Xóa
             </a> 
+            <?php endif; ?>
+
 
             <a href="/Product/addToCart/<?php echo $product->id; ?>"
                 class="btn btn-primary">

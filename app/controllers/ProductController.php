@@ -3,6 +3,7 @@
 require_once('app/config/database.php');
 require_once('app/models/ProductModel.php');
 require_once('app/models/CategoryModel.php');
+require_once('app/helpers/SessionHelper.php');
 
 class ProductController
 {
@@ -15,6 +16,14 @@ class ProductController
         $this->db = (new Database())->getConnection();
         $this->productModel = new ProductModel($this->db);
         $this->uploadDirectory = dirname(__DIR__, 2) . '/uploads/products';
+    }
+
+    private function requireAdmin()
+    {
+        if (!SessionHelper::isAdmin()) {
+            echo 'Ban khong co quyen truy cap chuc nang nay.';
+            exit;
+        }
     }
 
     public function index()
@@ -36,12 +45,17 @@ class ProductController
 
     public function add()
     {
+        $this->requireAdmin();
+
         $categories = (new CategoryModel($this->db))->getCategories();
         include 'app/views/product/add.php';
+        
     }
 
     public function save()
     {
+        $this->requireAdmin();
+
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return;
         }
@@ -86,6 +100,8 @@ class ProductController
 
     public function edit($id)
     {
+        $this->requireAdmin();
+
         $product = $this->productModel->getProductById($id);
         $categories = (new CategoryModel($this->db))->getCategories();
 
@@ -98,6 +114,8 @@ class ProductController
 
     public function update()
     {
+        $this->requireAdmin();
+
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return;
         }
@@ -146,6 +164,8 @@ class ProductController
 
     public function delete($id)
     {
+        $this->requireAdmin();
+        
         $product = $this->productModel->getProductById($id);
 
         if ($this->productModel->deleteProduct($id)) {
