@@ -13,6 +13,7 @@
 
         <link href="/assets/css/style.css" rel="stylesheet">
 
+        <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
         
 </head> 
 
@@ -60,7 +61,7 @@
         </li>
 
         <li class="nav-item">
-            <a class="nav-link" href="/Account/logout">Dang xuat</a>
+            <a class="nav-link" href="/Account/logout" onclick="localStorage.removeItem('jwtToken');">Dang xuat</a>
         </li>
     <?php else: ?>
         <li class="nav-item">

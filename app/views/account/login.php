@@ -8,7 +8,7 @@
     </div>
 <?php endif; ?>
 
-<form method="POST" action="/Account/checkLogin">
+<form id="login-form" method="POST" action="/Account/checkLogin">
     <div class="form-group">
         <label>Username hoac email:</label>
         <input type="text" name="login" class="form-control">
@@ -30,5 +30,33 @@
         Dang nhap bang GitHub
     </a>
 </form>
+
+<script>
+$(document).ready(function () {
+    $('#login-form').on('submit', function (event) {
+        event.preventDefault();
+
+        const data = {
+            login: $('input[name="login"]').val(),
+            password: $('input[name="password"]').val()
+        };
+
+        $.ajax({
+            url: '/api/account',
+            method: 'POST',
+            data: JSON.stringify(data),
+            contentType: 'application/json',
+            dataType: 'json',
+            success: function (response) {
+                localStorage.setItem('jwtToken', response.token);
+                window.location.href = '/Product';
+            },
+            error: function () {
+                alert('Dang nhap that bai');
+            }
+        });
+    });
+});
+</script>
 
 <?php include 'app/views/shares/footer.php'; ?>

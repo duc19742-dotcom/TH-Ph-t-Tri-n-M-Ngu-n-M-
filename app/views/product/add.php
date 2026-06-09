@@ -1,64 +1,92 @@
-<?php include 'app/views/shares/header.php'; ?> 
- 
-<h1>Thêm sản phẩm mới</h1> 
+<?php include 'app/views/shares/header.php'; ?>
 
-<?php if (!empty($errors)): ?> 
-    <div class="alert alert-danger"> 
-        <ul> 
-            <?php foreach ($errors as $error): ?> 
-                <li><?php echo htmlspecialchars($error, ENT_QUOTES, 'UTF-8'); ?></li> 
-            <?php endforeach; ?> 
-        </ul> 
-    </div> 
-<?php endif; ?> 
+<h1>Them san pham moi</h1>
 
-<form method="POST" action="/Product/save" enctype="multipart/form-data"> 
-    
-    <div class="form-group"> 
-        <label for="name">Tên sản phẩm:</label> 
-        <input type="text" id="name" name="name" class="form-control" required> 
-    </div> 
-
-    <div class="form-group"> 
-        <label for="description">Mô tả:</label> 
-        <textarea id="description" name="description" class="form-control" required></textarea> 
-    </div> 
-
-    <div class="form-group"> 
-        <label for="price">Giá:</label> 
-        <input type="number" id="price" name="price" class="form-control" step="0.01" required> 
-    </div> 
-
-    <div class="form-group"> 
-        <label for="category_id">Danh mục:</label> 
-        
-        <select id="category_id" name="category_id" class="form-control" required> 
-
-            <?php foreach ($categories as $category): ?> 
-
-                <option value="<?php echo $category->id; ?>">
-                    <?php echo htmlspecialchars($category->name, ENT_QUOTES, 'UTF-8'); ?>
-                </option> 
-
-            <?php endforeach; ?> 
-
-        </select> 
-    </div> 
-
+<form id="add-product-form">
     <div class="form-group">
-        <label for="image">H&igrave;nh &#7843;nh:</label>
-        <input type="file" id="image" name="image" class="form-control-file" accept="image/jpeg,image/png,image/gif,image/webp">
-        <small class="form-text text-muted">JPG, PNG, GIF ho&#7863;c WEBP; t&#7889;i &#273;a 2 MB.</small>
+        <label for="name">Ten san pham:</label>
+        <input type="text" id="name" name="name" class="form-control" required>
     </div>
 
-    <button type="submit" class="btn btn-primary">
-        Thêm sản phẩm
-    </button> 
+    <div class="form-group">
+        <label for="description">Mo ta:</label>
+        <textarea id="description" name="description" class="form-control" required></textarea>
+    </div>
 
-</form> 
+    <div class="form-group">
+        <label for="price">Gia:</label>
+        <input type="number" id="price" name="price" class="form-control" step="0.01" required>
+    </div>
 
-<a href="/Product" class="btn btn-secondary mt-2">
-    Quay lại danh sách sản phẩm
-</a> 
- 
+    <div class="form-group">
+        <label for="category_id">Danh muc:</label>
+        <select id="category_id" name="category_id" class="form-control" required></select>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Them san pham</button>
+</form>
+
+<a href="/Product" class="btn btn-secondary mt-2">Quay lai danh sach san pham</a>
+
+<script>
+$(document).ready(function () {
+    if (!getToken()) {
+        alert('Vui long dang nhap');
+        window.location.href = '/Account/login';
+        return;
+    }
+
+    $.ajax({
+        url: '/api/category',
+        method: 'GET',
+        dataType: 'json',
+        success: function (categories) {
+            const categorySelect = document.getElementById('category_id');
+            categories.forEach(category => {
+                const option = document.createElement('option');
+                option.value = category.id;
+                option.textContent = category.name;
+                categorySelect.appendChild(option);
+            });
+        }
+    });
+
+    $('#add-product-form').on('submit', function (event) {
+        event.preventDefault();
+
+        const formData = new FormData(this);
+        const jsonData = {};
+
+        formData.forEach((value, key) => {
+            jsonData[key] = value;
+        });
+
+        $.ajax({
+            url: '/api/product',
+            method: 'POST',
+            headers: {
+                Authorization: 'Bearer ' + getToken()
+            },
+            data: JSON.stringify(jsonData),
+            contentType: 'application/json',
+            dataType: 'json',
+            success: function (data) {
+                if (data.message === 'Product created successfully') {
+                    window.location.href = '/Product';
+                } else {
+                    alert('Them san pham that bai');
+                }
+            },
+            error: function () {
+                alert('Them san pham that bai');
+            }
+        });
+    });
+});
+
+function getToken() {
+    return localStorage.getItem('jwtToken');
+}
+</script>
+
 <?php include 'app/views/shares/footer.php'; ?>
